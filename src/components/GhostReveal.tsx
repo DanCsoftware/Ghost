@@ -82,11 +82,11 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
         </div>
 
         {/* Companies + Gap + Fix in compact cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
           {/* Top Companies with Logos */}
-          <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4">
+          <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4 min-h-[120px] flex flex-col">
             <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Most Applied</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-1 items-center">
               {demoData.topCompanies.map((company) => (
                 <div key={company.name} className="group relative">
                   <img
@@ -110,47 +110,51 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
           </div>
 
           {/* Gap - Expandable */}
-          <Collapsible open={gapOpen} onOpenChange={setGapOpen}>
-            <div className="bg-[#151c24] border border-red-500/30 rounded-xl p-4">
-              <CollapsibleTrigger className="w-full text-left">
+          <Collapsible open={gapOpen} onOpenChange={setGapOpen} className="min-h-[120px]">
+            <div className="bg-[#151c24] border border-red-500/30 rounded-xl p-4 min-h-[120px] flex flex-col">
+              <CollapsibleTrigger className="w-full text-left flex-1 flex flex-col cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-red-400 uppercase tracking-widest">Why Ghosted</p>
-                  <ChevronDown className={`w-4 h-4 text-red-400 transition-transform ${gapOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-red-400 transition-transform duration-200 ${gapOpen ? 'rotate-180' : ''}`} />
                 </div>
                 <p className="text-gray-200 text-sm leading-snug">{demoData.topGap}</p>
               </CollapsibleTrigger>
-              <CollapsibleContent className="mt-3 pt-3 border-t border-red-500/20">
-                <ul className="space-y-1.5">
-                  {demoData.gapDetails.map((detail, i) => (
-                    <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
-                      <span className="text-red-400">•</span>
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
+              <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                <div className="mt-3 pt-3 border-t border-red-500/20">
+                  <ul className="space-y-1.5">
+                    {demoData.gapDetails.map((detail, i) => (
+                      <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
+                        <span className="text-red-400">•</span>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
           {/* Fix - Expandable */}
-          <Collapsible open={fixOpen} onOpenChange={setFixOpen}>
-            <div className="bg-[#151c24] border border-ghost-accent/30 rounded-xl p-4">
-              <CollapsibleTrigger className="w-full text-left">
+          <Collapsible open={fixOpen} onOpenChange={setFixOpen} className="min-h-[120px]">
+            <div className="bg-[#151c24] border border-ghost-accent/30 rounded-xl p-4 min-h-[120px] flex flex-col">
+              <CollapsibleTrigger className="w-full text-left flex-1 flex flex-col cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-ghost-accent uppercase tracking-widest">Ghost Recommends</p>
-                  <ChevronDown className={`w-4 h-4 text-ghost-accent transition-transform ${fixOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-ghost-accent transition-transform duration-200 ${fixOpen ? 'rotate-180' : ''}`} />
                 </div>
                 <p className="text-gray-200 text-sm leading-snug">{demoData.topFix}</p>
               </CollapsibleTrigger>
-              <CollapsibleContent className="mt-3 pt-3 border-t border-ghost-accent/20">
-                <ul className="space-y-1.5">
-                  {demoData.fixDetails.map((detail, i) => (
-                    <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
-                      <span className="text-ghost-accent">•</span>
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
+              <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                <div className="mt-3 pt-3 border-t border-ghost-accent/20">
+                  <ul className="space-y-1.5">
+                    {demoData.fixDetails.map((detail, i) => (
+                      <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
+                        <span className="text-ghost-accent">•</span>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
