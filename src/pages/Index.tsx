@@ -1,12 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import GhostEntry from "@/components/GhostEntry";
+import GhostScan from "@/components/GhostScan";
+import GhostReveal from "@/components/GhostReveal";
+
+type Screen = "entry" | "scan" | "reveal";
 
 const Index = () => {
+  const [screen, setScreen] = useState<Screen>("entry");
+  const [email, setEmail] = useState("");
+
+  const handleReveal = (userEmail: string) => {
+    setEmail(userEmail);
+    setScreen("scan");
+  };
+
+  const handleScanComplete = () => {
+    setScreen("reveal");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="bg-background text-foreground">
+      {screen === "entry" && <GhostEntry onReveal={handleReveal} />}
+      {screen === "scan" && <GhostScan email={email} onComplete={handleScanComplete} />}
+      {screen === "reveal" && <GhostReveal />}
     </div>
   );
 };
