@@ -15,7 +15,11 @@ const demoData = {
   topFix: "System Design, AWS, Target Mid-level roles",
 };
 
-const GhostReveal = () => {
+interface GhostRevealProps {
+  onReset: () => void;
+}
+
+const GhostReveal = ({ onReset }: GhostRevealProps) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-[#0a0f14]">
       <div className="w-full max-w-2xl space-y-6 animate-fade-in">
@@ -85,9 +89,17 @@ const GhostReveal = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-500 text-xs pt-4">
-          Your real data stays private
-        </p>
+        <div className="text-center pt-4 space-y-3">
+          <button
+            onClick={onReset}
+            className="text-ghost-accent hover:text-ghost-accent/80 text-sm font-medium transition-colors"
+          >
+            ← Scan Another Inbox
+          </button>
+          <p className="text-gray-500 text-xs">
+            Your real data stays private
+          </p>
+        </div>
       </div>
     </div>
   );

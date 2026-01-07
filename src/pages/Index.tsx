@@ -18,11 +18,16 @@ const Index = () => {
     setScreen("reveal");
   };
 
+  const handleReset = () => {
+    setEmail("");
+    setScreen("entry");
+  };
+
   return (
     <div className="bg-background text-foreground">
       {screen === "entry" && <GhostEntry onReveal={handleReveal} />}
       {screen === "scan" && <GhostScan email={email} onComplete={handleScanComplete} />}
-      {screen === "reveal" && <GhostReveal />}
+      {screen === "reveal" && <GhostReveal onReset={handleReset} />}
     </div>
   );
 };
