@@ -1,158 +1,93 @@
-import { Ghost, TrendingUp, TrendingDown, Building2, AlertTriangle, Lightbulb } from "lucide-react";
+import { Ghost } from "lucide-react";
 
 const demoData = {
   totalApplications: 47,
-  breakdown: [
-    { label: "Callbacks", count: 5, color: "bg-green-500", icon: "🟢" },
-    { label: "Interviewing", count: 8, color: "bg-yellow-500", icon: "🟡" },
-    { label: "Rejected", count: 12, color: "bg-red-500", icon: "🔴" },
-    { label: "Ghosted", count: 22, color: "bg-ghost-accent", icon: "👻" },
-  ],
   callbackRate: 10.6,
-  avgRate: 8,
-  topCompanies: [
-    { name: "Google", count: 4 },
-    { name: "Meta", count: 3 },
-    { name: "Stripe", count: 3 },
+  ghosted: 22,
+  breakdown: [
+    { label: "Callbacks", count: 5, color: "bg-ghost-success" },
+    { label: "Interviewing", count: 8, color: "bg-ghost-warning" },
+    { label: "Rejected", count: 12, color: "bg-ghost-danger" },
+    { label: "Ghosted", count: 22, color: "bg-ghost-accent" },
   ],
-  gaps: [
-    "You apply for Senior roles but your resume shows 2 YOE",
-    "Missing: Python, AWS in 68% of rejected applications",
-    "Application timing: 73% sent on Mondays (highest competition)",
-  ],
-  recommendations: [
-    { skill: "System Design", reason: "Required in 80% of senior roles you applied for" },
-    { skill: "AWS Certification", reason: "Mentioned in 12 rejections" },
-    { skill: "Target Mid-level roles", reason: "Better match for your experience" },
-  ],
+  topCompanies: ["Google", "Meta", "Stripe"],
+  topGap: "You apply for Senior roles but your resume shows 2 YOE",
+  topFix: "System Design, AWS, Target Mid-level roles",
 };
 
 const GhostReveal = () => {
   return (
-    <div className="min-h-screen py-16 px-6">
-      <div className="max-w-2xl mx-auto space-y-16">
-        {/* Hero Stat */}
-        <section className="text-center animate-fade-in">
-          <Ghost className="w-12 h-12 text-ghost-accent mx-auto mb-6" strokeWidth={1.5} />
-          <p className="text-muted-foreground text-sm uppercase tracking-widest mb-2">
-            Last 3 months
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
+      <div className="w-full max-w-2xl space-y-6 animate-fade-in">
+        {/* Header */}
+        <div className="text-center mb-2">
+          <Ghost className="w-8 h-8 text-ghost-accent mx-auto mb-2" strokeWidth={1.5} />
+          <p className="text-muted-foreground text-xs uppercase tracking-widest">
+            Last 3 months • Demo Mode
           </p>
-          <h1 className="text-8xl md:text-9xl font-bold tracking-tighter text-ghost-accent">
-            {demoData.totalApplications}
-          </h1>
-          <p className="text-2xl text-foreground mt-2">applications sent</p>
-        </section>
+        </div>
 
-        {/* Breakdown */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-            The Breakdown
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            {demoData.breakdown.map((item) => (
-              <div
-                key={item.label}
-                className="bg-ghost-card border border-ghost-border rounded-xl p-6 text-center"
-              >
-                <span className="text-3xl mb-2 block">{item.icon}</span>
-                <p className="text-4xl font-bold text-foreground">{item.count}</p>
-                <p className="text-muted-foreground text-sm mt-1">{item.label}</p>
-              </div>
-            ))}
+        {/* Hero Stats Row */}
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="bg-ghost-card border border-ghost-border rounded-xl p-4">
+            <p className="text-4xl md:text-5xl font-bold text-foreground">{demoData.totalApplications}</p>
+            <p className="text-muted-foreground text-xs mt-1 uppercase tracking-wide">Applications</p>
           </div>
-        </section>
+          <div className="bg-ghost-card border border-ghost-border rounded-xl p-4">
+            <p className="text-4xl md:text-5xl font-bold text-ghost-accent">{demoData.callbackRate}%</p>
+            <p className="text-muted-foreground text-xs mt-1 uppercase tracking-wide">Callback Rate</p>
+          </div>
+          <div className="bg-ghost-card border border-ghost-border rounded-xl p-4">
+            <p className="text-4xl md:text-5xl font-bold text-foreground">👻 {demoData.ghosted}</p>
+            <p className="text-muted-foreground text-xs mt-1 uppercase tracking-wide">Ghosted</p>
+          </div>
+        </div>
 
-        {/* Conversion Rate */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-            Callback Rate
-          </h2>
-          <div className="bg-ghost-card border border-ghost-border rounded-xl p-8">
-            <div className="flex items-end gap-4">
-              <span className="text-6xl font-bold text-foreground">
-                {demoData.callbackRate}%
-              </span>
-              <div className="flex items-center gap-2 text-green-500 mb-2">
-                <TrendingUp className="w-5 h-5" />
-                <span className="text-sm">Above average</span>
-              </div>
+        {/* Status Pills */}
+        <div className="flex flex-wrap gap-2 justify-center">
+          {demoData.breakdown.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-2 bg-ghost-card border border-ghost-border rounded-full px-4 py-2"
+            >
+              <span className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
+              <span className="text-foreground font-medium">{item.count}</span>
+              <span className="text-muted-foreground text-sm">{item.label}</span>
             </div>
-            <p className="text-muted-foreground mt-2">
-              Industry average is {demoData.avgRate}%
-            </p>
-          </div>
-        </section>
+          ))}
+        </div>
 
-        {/* Top Companies */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-            <Building2 className="w-4 h-4 inline mr-2" />
-            Most Applied
-          </h2>
-          <div className="space-y-3">
-            {demoData.topCompanies.map((company, index) => (
-              <div
-                key={company.name}
-                className="flex items-center justify-between bg-ghost-card border border-ghost-border rounded-xl px-6 py-4"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="text-2xl font-bold text-muted-foreground">
-                    {index + 1}
-                  </span>
-                  <span className="text-lg text-foreground">{company.name}</span>
-                </div>
-                <span className="text-ghost-accent font-semibold">
-                  {company.count} apps
+        {/* Companies + Gap + Fix in compact cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Top Companies */}
+          <div className="bg-ghost-card border border-ghost-border rounded-xl p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Most Applied</p>
+            <div className="flex flex-wrap gap-1.5">
+              {demoData.topCompanies.map((company, i) => (
+                <span key={company} className="text-foreground font-medium">
+                  {company}{i < demoData.topCompanies.length - 1 && <span className="text-muted-foreground">,</span>}
                 </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </section>
 
-        {/* Gap Analysis */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-            <AlertTriangle className="w-4 h-4 inline mr-2" />
-            Why You're Getting Ghosted
-          </h2>
-          <div className="space-y-3">
-            {demoData.gaps.map((gap, index) => (
-              <div
-                key={index}
-                className="bg-ghost-card border border-red-500/30 rounded-xl px-6 py-4"
-              >
-                <p className="text-foreground">{gap}</p>
-              </div>
-            ))}
+          {/* Gap */}
+          <div className="bg-ghost-card border border-ghost-danger/40 rounded-xl p-4">
+            <p className="text-xs text-ghost-danger uppercase tracking-widest mb-2">Why Ghosted</p>
+            <p className="text-foreground text-sm leading-snug">{demoData.topGap}</p>
           </div>
-        </section>
 
-        {/* Recommendations */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-            <Lightbulb className="w-4 h-4 inline mr-2" />
-            Ghost Recommends
-          </h2>
-          <div className="space-y-3">
-            {demoData.recommendations.map((rec, index) => (
-              <div
-                key={index}
-                className="bg-ghost-card border border-ghost-accent/30 rounded-xl px-6 py-4"
-              >
-                <p className="text-ghost-accent font-semibold text-lg">{rec.skill}</p>
-                <p className="text-muted-foreground text-sm mt-1">{rec.reason}</p>
-              </div>
-            ))}
+          {/* Fix */}
+          <div className="bg-ghost-card border border-ghost-accent/40 rounded-xl p-4">
+            <p className="text-xs text-ghost-accent uppercase tracking-widest mb-2">Ghost Recommends</p>
+            <p className="text-foreground text-sm leading-snug">{demoData.topFix}</p>
           </div>
-        </section>
+        </div>
 
         {/* Footer */}
-        <section className="text-center pt-8 border-t border-ghost-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
-          <Ghost className="w-8 h-8 text-muted-foreground mx-auto mb-4" strokeWidth={1.5} />
-          <p className="text-muted-foreground text-sm">
-            Demo Mode • Your real data stays private
-          </p>
-        </section>
+        <p className="text-center text-muted-foreground text-xs pt-4">
+          Your real data stays private
+        </p>
       </div>
     </div>
   );

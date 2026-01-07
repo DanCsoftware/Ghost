@@ -17,6 +17,9 @@ export default {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -66,6 +69,9 @@ export default {
           accent: "hsl(var(--ghost-accent))",
           card: "hsl(var(--ghost-card))",
           border: "hsl(var(--ghost-border))",
+          success: "hsl(var(--ghost-success))",
+          warning: "hsl(var(--ghost-warning))",
+          danger: "hsl(var(--ghost-danger))",
         },
       },
       borderRadius: {
