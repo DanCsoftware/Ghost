@@ -49,6 +49,9 @@ const GhostEntry = ({ onReveal }: GhostEntryProps) => {
         >
           REVEAL
         </Button>
+        <p className="text-xs text-muted-foreground/60 text-center mt-4">
+          We don't save your email. We just read the pattern.
+        </p>
       </form>
     </div>
   );
