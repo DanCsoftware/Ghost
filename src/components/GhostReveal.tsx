@@ -51,8 +51,8 @@ const GhostReveal = () => {
               className="flex items-center gap-2 bg-ghost-card border border-ghost-border rounded-full px-4 py-2"
             >
               <span className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-              <span className="text-foreground font-medium">{item.count}</span>
-              <span className="text-muted-foreground text-sm">{item.label}</span>
+              <span className="text-white font-medium">{item.count}</span>
+              <span className="text-white/70 text-sm">{item.label}</span>
             </div>
           ))}
         </div>
@@ -61,11 +61,11 @@ const GhostReveal = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Top Companies */}
           <div className="bg-ghost-card border border-ghost-border rounded-xl p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Most Applied</p>
+            <p className="text-xs text-white/60 uppercase tracking-widest mb-2">Most Applied</p>
             <div className="flex flex-wrap gap-1.5">
               {demoData.topCompanies.map((company, i) => (
-                <span key={company} className="text-foreground font-medium">
-                  {company}{i < demoData.topCompanies.length - 1 && <span className="text-muted-foreground">,</span>}
+                <span key={company} className="text-white font-medium">
+                  {company}{i < demoData.topCompanies.length - 1 && <span className="text-white/50">,</span>}
                 </span>
               ))}
             </div>
@@ -74,13 +74,13 @@ const GhostReveal = () => {
           {/* Gap */}
           <div className="bg-ghost-card border border-ghost-danger/40 rounded-xl p-4">
             <p className="text-xs text-ghost-danger uppercase tracking-widest mb-2">Why Ghosted</p>
-            <p className="text-foreground text-sm leading-snug">{demoData.topGap}</p>
+            <p className="text-white/90 text-sm leading-snug">{demoData.topGap}</p>
           </div>
 
           {/* Fix */}
           <div className="bg-ghost-card border border-ghost-accent/40 rounded-xl p-4">
             <p className="text-xs text-ghost-accent uppercase tracking-widest mb-2">Ghost Recommends</p>
-            <p className="text-foreground text-sm leading-snug">{demoData.topFix}</p>
+            <p className="text-white/90 text-sm leading-snug">{demoData.topFix}</p>
           </div>
         </div>
 
