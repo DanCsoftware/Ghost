@@ -14,31 +14,35 @@ const GhostScan = ({ email, onComplete }: GhostScanProps) => {
     const statuses = [
       "Connecting to inbox...",
       "Scanning sent applications...",
-      "Analyzing responses...",
-      "Detecting ghosts...",
+      "Comparing role level vs experience…",
+      "Checking callback patterns…",
+      "Detecting seniority mismatch…",
+      "Identifying ghost-heavy companies…",
       "Calculating your fate..."
     ];
 
+    const totalDuration = 5500; // 5.5 seconds total
+    const statusInterval = totalDuration / statuses.length;
+    
     let currentStatus = 0;
-    const statusInterval = setInterval(() => {
+    const statusTimer = setInterval(() => {
       currentStatus++;
       if (currentStatus < statuses.length) {
         setStatus(statuses[currentStatus]);
       }
-    }, 600);
+    }, statusInterval);
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
-          clearInterval(statusInterval);
+          clearInterval(statusTimer);
           setTimeout(onComplete, 300);
           return 100;
         }
-        return prev + 2;
+        return prev + 1;
       });
-    }, 50);
-
+    }, totalDuration / 100);
     return () => {
       clearInterval(progressInterval);
       clearInterval(statusInterval);
