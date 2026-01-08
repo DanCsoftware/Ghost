@@ -128,7 +128,7 @@ const GhostEntry = ({ onReveal, onGmailConnect }: GhostEntryProps) => {
             type="submit"
             disabled={!email.trim()}
             variant="outline"
-            className="w-full h-12 text-base font-medium border-ghost-border hover:bg-ghost-card hover:border-ghost-accent transition-all duration-300 disabled:opacity-30"
+            className="w-full h-12 text-base font-medium border-ghost-border hover:bg-ghost-accent/10 hover:border-ghost-accent hover:text-ghost-accent transition-all duration-300 disabled:opacity-30"
           >
             Try Demo Mode
           </Button>
