@@ -13,12 +13,16 @@ serve(async (req) => {
 
   try {
     const clientId = Deno.env.get('GOOGLE_CLIENT_ID');
-    const redirectUri = `${Deno.env.get('SUPABASE_URL')}/functions/v1/gmail-callback`;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const redirectUri = `${supabaseUrl}/functions/v1/gmail-callback`;
     
     if (!clientId) {
       console.error('GOOGLE_CLIENT_ID not configured');
       throw new Error('Google OAuth not configured');
     }
+
+    // Generate a random state for CSRF protection
+    const state = crypto.randomUUID();
 
     // Build Google OAuth URL with gmail.readonly scope
     const scopes = [
@@ -33,11 +37,21 @@ serve(async (req) => {
     authUrl.searchParams.set('scope', scopes.join(' '));
     authUrl.searchParams.set('access_type', 'offline');
     authUrl.searchParams.set('prompt', 'consent');
+    authUrl.searchParams.set('state', state);
 
-    console.log('Generated auth URL, redirecting user to Google consent');
+    console.log('Generated auth URL with state:', state);
+    console.log('Redirect URI:', redirectUri);
+    console.log('Client ID prefix:', clientId.substring(0, 20) + '...');
 
     return new Response(
-      JSON.stringify({ authUrl: authUrl.toString() }),
+      JSON.stringify({ 
+        authUrl: authUrl.toString(),
+        debug: {
+          redirectUri,
+          clientIdPrefix: clientId.substring(0, 20) + '...',
+          state
+        }
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 

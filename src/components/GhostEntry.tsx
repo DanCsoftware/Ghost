@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Ghost, Mail } from "lucide-react";
+import { Ghost, Mail, AlertCircle, Copy, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface GhostEntryProps {
@@ -9,9 +9,32 @@ interface GhostEntryProps {
   onGmailConnect: () => void;
 }
 
+interface OAuthDebugInfo {
+  redirectUri?: string;
+  clientIdPrefix?: string;
+  state?: string;
+}
+
 const GhostEntry = ({ onReveal, onGmailConnect }: GhostEntryProps) => {
   const [email, setEmail] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
+  const [oauthError, setOauthError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<OAuthDebugInfo | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Check for OAuth error in URL on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const errorDescription = urlParams.get('error_description');
+    
+    if (error) {
+      const fullError = errorDescription ? `${error}: ${errorDescription}` : error;
+      setOauthError(fullError);
+      // Clean up URL
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,13 +45,21 @@ const GhostEntry = ({ onReveal, onGmailConnect }: GhostEntryProps) => {
 
   const handleGmailConnect = async () => {
     setIsConnecting(true);
+    setOauthError(null);
     try {
       const { data, error } = await supabase.functions.invoke('gmail-auth');
       
       if (error) {
         console.error('Error initiating Gmail auth:', error);
+        setOauthError(error.message || 'Failed to initiate Gmail auth');
         setIsConnecting(false);
         return;
+      }
+
+      // Store debug info for display
+      if (data?.debug) {
+        setDebugInfo(data.debug);
+        console.log('OAuth Debug Info:', data.debug);
       }
 
       if (data?.authUrl) {
@@ -37,7 +68,16 @@ const GhostEntry = ({ onReveal, onGmailConnect }: GhostEntryProps) => {
       }
     } catch (err) {
       console.error('Failed to connect Gmail:', err);
+      setOauthError(err instanceof Error ? err.message : 'Unknown error');
       setIsConnecting(false);
+    }
+  };
+
+  const copyDebugInfo = () => {
+    if (debugInfo) {
+      navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -97,6 +137,40 @@ const GhostEntry = ({ onReveal, onGmailConnect }: GhostEntryProps) => {
         <p className="text-xs text-muted-foreground/60 text-center mt-4">
           Connect Gmail for real insights • Demo mode uses sample data
         </p>
+
+        {/* OAuth Error Display */}
+        {oauthError && (
+          <div className="mt-4 p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-destructive">OAuth Error</p>
+                <p className="text-xs text-muted-foreground break-words">{oauthError}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Debug Info Panel (shown when there's an error) */}
+        {oauthError && debugInfo && (
+          <div className="mt-3 p-3 bg-ghost-card border border-ghost-border rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Debug Info</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={copyDebugInfo}
+                className="h-6 px-2 text-xs"
+              >
+                {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+              </Button>
+            </div>
+            <div className="space-y-1 text-xs font-mono text-muted-foreground">
+              <p><span className="text-foreground/60">Redirect URI:</span> {debugInfo.redirectUri}</p>
+              <p><span className="text-foreground/60">Client ID:</span> {debugInfo.clientIdPrefix}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
