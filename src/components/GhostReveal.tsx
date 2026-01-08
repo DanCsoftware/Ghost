@@ -5,6 +5,8 @@ import type { ScanResult } from "./GhostScan";
 
 const CompanyLogo = ({ name, domain }: { name: string; domain: string }) => {
   const [fallbackLevel, setFallbackLevel] = useState(0);
+  
+  console.log('CompanyLogo render:', { name, domain, fallbackLevel });
 
   if (!domain || fallbackLevel >= 2) {
     return (

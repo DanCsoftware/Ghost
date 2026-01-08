@@ -170,6 +170,8 @@ serve(async (req) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    console.log('Extracted companies:', sortedCompanies.map(c => ({ name: c.name, domain: c.domain, count: c.count })));
+
     const topCompanies = sortedCompanies.map((company) => ({
       name: company.name,
       domain: company.domain,
