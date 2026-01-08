@@ -3,6 +3,41 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 import { useState } from "react";
 import type { ScanResult } from "./GhostScan";
 
+const CompanyLogo = ({ name, domain }: { name: string; domain: string }) => {
+  const [fallbackLevel, setFallbackLevel] = useState(0);
+
+  if (!domain || fallbackLevel >= 2) {
+    return (
+      <div className="group relative">
+        <span className="w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
+          {name[0]}
+        </span>
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          {name}
+        </span>
+      </div>
+    );
+  }
+
+  const logoSrc = fallbackLevel === 0 
+    ? `https://logo.clearbit.com/${domain}` 
+    : `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+
+  return (
+    <div className="group relative">
+      <img
+        src={logoSrc}
+        alt={name}
+        className="w-8 h-8 rounded-full bg-white p-0.5 object-contain"
+        onError={() => setFallbackLevel(prev => prev + 1)}
+      />
+      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        {name}
+      </span>
+    </div>
+  );
+};
+
 interface GhostRevealProps {
   onReset: () => void;
   data: ScanResult;
@@ -61,31 +96,7 @@ const GhostReveal = ({ onReset, data, isDemo = false }: GhostRevealProps) => {
             <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Most Applied</p>
             <div className="flex gap-2 flex-1 items-center">
               {data.topCompanies.map((company) => (
-                <div key={company.name} className="group relative">
-                  {company.logo ? (
-                    <>
-                      <img
-                        src={company.logo}
-                        alt={company.name}
-                        className="w-8 h-8 rounded-full bg-white p-0.5 object-contain"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                      <span className="hidden w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
-                        {company.name[0]}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
-                      {company.name[0]}
-                    </span>
-                  )}
-                  <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {company.name}
-                  </span>
-                </div>
+                <CompanyLogo key={company.name} name={company.name} domain={company.domain} />
               ))}
             </div>
           </div>
