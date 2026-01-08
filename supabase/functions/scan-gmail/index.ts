@@ -20,11 +20,42 @@ interface ScanResult {
   callbackRate: number;
   ghosted: number;
   breakdown: Array<{ label: string; count: number; color: string }>;
-  topCompanies: Array<{ name: string; logo: string }>;
+  topCompanies: Array<{ name: string; domain: string }>;
   topGap: string;
   gapDetails: string[];
   topFix: string;
   fixDetails: string[];
+}
+
+// ATS providers to filter out (these are recruiting platforms, not actual companies)
+const atsProviders = ['greenhouse', 'lever', 'workday', 'ashbyhq', 'icims', 'taleo', 'jobvite', 'smartrecruiters', 'myworkdayjobs'];
+
+function extractCompanyDomain(fromEmail: string): { name: string; domain: string } | null {
+  // Extract domain from email
+  const domainMatch = fromEmail.match(/@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  if (!domainMatch) return null;
+  
+  const fullDomain = domainMatch[1].toLowerCase();
+  
+  // Skip ATS/recruiting platforms
+  if (atsProviders.some(ats => fullDomain.includes(ats))) return null;
+  
+  // Handle subdomains: careers.google.com → google.com
+  const parts = fullDomain.split('.');
+  let baseDomain = fullDomain;
+  if (parts.length > 2) {
+    baseDomain = parts.slice(-2).join('.');
+  }
+  
+  // Extract company name (first part of base domain)
+  const companyName = baseDomain.split('.')[0];
+  
+  // Skip common email providers
+  if (['gmail', 'yahoo', 'hotmail', 'outlook', 'icloud', 'protonmail'].includes(companyName)) {
+    return null;
+  }
+  
+  return { name: companyName.charAt(0).toUpperCase() + companyName.slice(1), domain: baseDomain };
 }
 
 serve(async (req) => {
@@ -73,7 +104,7 @@ serve(async (req) => {
 
     // Fetch details for each message
     const emailDetails: EmailMessage[] = [];
-    const companyCount: Record<string, number> = {};
+    const companyCount: Record<string, { count: number; name: string; domain: string }> = {};
     
     let callbacks = 0;
     let interviewing = 0;
@@ -101,14 +132,14 @@ serve(async (req) => {
       const date = headers.find((h: any) => h.name === 'Date')?.value || '';
       const snippet = msgData.snippet || '';
 
-      // Extract company name from sender
-      const companyMatch = from.match(/@([a-zA-Z0-9-]+)\./);
-      if (companyMatch) {
-        const company = companyMatch[1].toLowerCase();
-        // Skip common email providers
-        if (!['gmail', 'yahoo', 'hotmail', 'outlook', 'icloud', 'protonmail'].includes(company)) {
-          companyCount[company] = (companyCount[company] || 0) + 1;
+      // Extract company info from sender
+      const companyInfo = extractCompanyDomain(from);
+      if (companyInfo) {
+        const key = companyInfo.domain;
+        if (!companyCount[key]) {
+          companyCount[key] = { count: 0, name: companyInfo.name, domain: companyInfo.domain };
         }
+        companyCount[key].count++;
       }
 
       // Categorize email based on content
@@ -135,13 +166,13 @@ serve(async (req) => {
     ghosted = Math.max(0, totalApplications - callbacks - interviewing - rejected);
 
     // Get top companies
-    const sortedCompanies = Object.entries(companyCount)
-      .sort((a, b) => b[1] - a[1])
+    const sortedCompanies = Object.values(companyCount)
+      .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    const topCompanies = sortedCompanies.map(([name]) => ({
-      name: name.charAt(0).toUpperCase() + name.slice(1),
-      logo: `https://logo.clearbit.com/${name}.com`,
+    const topCompanies = sortedCompanies.map((company) => ({
+      name: company.name,
+      domain: company.domain,
     }));
 
     // Calculate callback rate
@@ -210,7 +241,7 @@ serve(async (req) => {
         { label: "Ghosted", count: ghosted, color: "bg-ghost-accent" },
       ],
       topCompanies: topCompanies.length > 0 ? topCompanies : [
-        { name: "No companies", logo: "" }
+        { name: "No companies", domain: "" }
       ],
       topGap,
       gapDetails,

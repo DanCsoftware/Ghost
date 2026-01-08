@@ -7,7 +7,7 @@ export interface ScanResult {
   callbackRate: number;
   ghosted: number;
   breakdown: Array<{ label: string; count: number; color: string }>;
-  topCompanies: Array<{ name: string; logo: string }>;
+  topCompanies: Array<{ name: string; domain: string }>;
   topGap: string;
   gapDetails: string[];
   topFix: string;
@@ -31,9 +31,9 @@ const demoData: ScanResult = {
     { label: "Ghosted", count: 22, color: "bg-ghost-accent" },
   ],
   topCompanies: [
-    { name: "Google", logo: "https://logo.clearbit.com/google.com" },
-    { name: "Meta", logo: "https://logo.clearbit.com/meta.com" },
-    { name: "Stripe", logo: "https://logo.clearbit.com/stripe.com" },
+    { name: "Google", domain: "google.com" },
+    { name: "Meta", domain: "meta.com" },
+    { name: "Stripe", domain: "stripe.com" },
   ],
   topGap: "You apply for Senior roles but your resume shows 2 YOE",
   gapDetails: [
