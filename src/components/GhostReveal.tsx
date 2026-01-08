@@ -1,42 +1,15 @@
 import { Ghost, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { useState } from "react";
-
-const demoData = {
-  totalApplications: 47,
-  callbackRate: 10.6,
-  ghosted: 22,
-  breakdown: [
-    { label: "Callbacks", count: 5, color: "bg-ghost-success" },
-    { label: "Interviewing", count: 8, color: "bg-ghost-warning" },
-    { label: "Rejected", count: 12, color: "bg-ghost-danger" },
-    { label: "Ghosted", count: 22, color: "bg-ghost-accent" },
-  ],
-  topCompanies: [
-    { name: "Google", logo: "https://logo.clearbit.com/google.com" },
-    { name: "Meta", logo: "https://logo.clearbit.com/meta.com" },
-    { name: "Stripe", logo: "https://logo.clearbit.com/stripe.com" },
-  ],
-  topGap: "You apply for Senior roles but your resume shows 2 YOE",
-  gapDetails: [
-    "Experience mismatch: 2 YOE vs 5+ required",
-    "Missing keywords: 'team lead', 'architect'",
-    "No portfolio or GitHub links in applications",
-  ],
-  topFix: "System Design, AWS, Target Mid-level roles",
-  fixDetails: [
-    "Focus on System Design fundamentals",
-    "Get AWS Solutions Architect certification",
-    "Target Mid-level (3-5 YOE) roles instead",
-    "Add quantifiable achievements to resume",
-  ],
-};
+import type { ScanResult } from "./GhostScan";
 
 interface GhostRevealProps {
   onReset: () => void;
+  data: ScanResult;
+  isDemo?: boolean;
 }
 
-const GhostReveal = ({ onReset }: GhostRevealProps) => {
+const GhostReveal = ({ onReset, data, isDemo = false }: GhostRevealProps) => {
   const [gapOpen, setGapOpen] = useState(false);
   const [fixOpen, setFixOpen] = useState(false);
 
@@ -47,29 +20,29 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
         <div className="text-center mb-2">
           <Ghost className="w-8 h-8 text-ghost-accent mx-auto mb-2" strokeWidth={1.5} />
           <p className="text-gray-400 text-xs uppercase tracking-widest">
-            Last 6 months • Demo Mode
+            Last 3 months • {isDemo ? "Demo Mode" : "Gmail Scan"}
           </p>
         </div>
 
         {/* Hero Stats Row */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4">
-            <p className="text-4xl md:text-5xl font-bold text-white">{demoData.totalApplications}</p>
+            <p className="text-4xl md:text-5xl font-bold text-white">{data.totalApplications}</p>
             <p className="text-gray-400 text-xs mt-1 uppercase tracking-wide">Applications</p>
           </div>
           <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4">
-            <p className="text-4xl md:text-5xl font-bold text-ghost-accent">{demoData.callbackRate}%</p>
+            <p className="text-4xl md:text-5xl font-bold text-ghost-accent">{data.callbackRate}%</p>
             <p className="text-gray-400 text-xs mt-1 uppercase tracking-wide">Callback Rate</p>
           </div>
           <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4">
-            <p className="text-4xl md:text-5xl font-bold text-white">👻 {demoData.ghosted}</p>
+            <p className="text-4xl md:text-5xl font-bold text-white">👻 {data.ghosted}</p>
             <p className="text-gray-400 text-xs mt-1 uppercase tracking-wide">Ghosted</p>
           </div>
         </div>
 
         {/* Status Pills */}
         <div className="flex flex-wrap gap-2 justify-center">
-          {demoData.breakdown.map((item) => (
+          {data.breakdown.map((item) => (
             <div
               key={item.label}
               className="flex items-center gap-2 bg-[#151c24] border border-[#2a3441] rounded-full px-4 py-2"
@@ -87,20 +60,28 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
           <div className="bg-[#151c24] border border-[#2a3441] rounded-xl p-4 min-h-[120px] flex flex-col">
             <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Most Applied</p>
             <div className="flex gap-2 flex-1 items-center">
-              {demoData.topCompanies.map((company) => (
+              {data.topCompanies.map((company) => (
                 <div key={company.name} className="group relative">
-                  <img
-                    src={company.logo}
-                    alt={company.name}
-                    className="w-8 h-8 rounded-full bg-white p-0.5 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
-                  />
-                  <span className="hidden w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
-                    {company.name[0]}
-                  </span>
+                  {company.logo ? (
+                    <>
+                      <img
+                        src={company.logo}
+                        alt={company.name}
+                        className="w-8 h-8 rounded-full bg-white p-0.5 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                      <span className="hidden w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
+                        {company.name[0]}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="w-8 h-8 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center">
+                      {company.name[0]}
+                    </span>
+                  )}
                   <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                     {company.name}
                   </span>
@@ -117,12 +98,12 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
                   <p className="text-xs text-red-400 uppercase tracking-widest">Why Ghosted</p>
                   <ChevronDown className={`w-4 h-4 text-red-400 transition-transform duration-200 ${gapOpen ? 'rotate-180' : ''}`} />
                 </div>
-                <p className="text-gray-200 text-sm leading-snug">{demoData.topGap}</p>
+                <p className="text-gray-200 text-sm leading-snug">{data.topGap}</p>
               </CollapsibleTrigger>
               <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                 <div className="mt-3 pt-3 border-t border-red-500/20">
                   <ul className="space-y-1.5">
-                    {demoData.gapDetails.map((detail, i) => (
+                    {data.gapDetails.map((detail, i) => (
                       <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
                         <span className="text-red-400">•</span>
                         {detail}
@@ -142,12 +123,12 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
                   <p className="text-xs text-ghost-accent uppercase tracking-widest">Ghost Recommends</p>
                   <ChevronDown className={`w-4 h-4 text-ghost-accent transition-transform duration-200 ${fixOpen ? 'rotate-180' : ''}`} />
                 </div>
-                <p className="text-gray-200 text-sm leading-snug">{demoData.topFix}</p>
+                <p className="text-gray-200 text-sm leading-snug">{data.topFix}</p>
               </CollapsibleTrigger>
               <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                 <div className="mt-3 pt-3 border-t border-ghost-accent/20">
                   <ul className="space-y-1.5">
-                    {demoData.fixDetails.map((detail, i) => (
+                    {data.fixDetails.map((detail, i) => (
                       <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
                         <span className="text-ghost-accent">•</span>
                         {detail}
@@ -169,7 +150,7 @@ const GhostReveal = ({ onReset }: GhostRevealProps) => {
             ← Scan Another Inbox
           </button>
           <p className="text-gray-500 text-xs">
-            Your real data stays private
+            Your real data stays private • Never stored
           </p>
         </div>
       </div>
