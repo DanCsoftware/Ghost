@@ -31,9 +31,10 @@ const demoData: ScanResult = {
     { label: "Ghosted", count: 22, color: "bg-ghost-accent" },
   ],
   topCompanies: [
-    { name: "Google", domain: "google.com" },
-    { name: "Meta", domain: "meta.com" },
-    { name: "Stripe", domain: "stripe.com" },
+    { name: "Crypto.com", domain: "crypto.com" },
+    { name: "Chainlink Labs", domain: "chain.link" },
+    { name: "Discord", domain: "discord.com" },
+    { name: "Coinbase", domain: "coinbase.com" },
   ],
   topGap: "You apply for Senior roles but your resume shows 2 YOE",
   gapDetails: [
