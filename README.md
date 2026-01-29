@@ -1,73 +1,160 @@
-# Welcome to your Lovable project
+# Ghost
 
-## Project info
+A job application tracker that connects to your Gmail and tells you which applications got ghosted.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## The Problem
 
-## How can I edit this code?
+When job hunting, it's hard to track which applications you've sent and whether companies responded. Ghost automates this by scanning your Gmail for job applications and identifying which ones never got a response.
 
-There are several ways of editing your application.
+## What It Does
 
-**Use Lovable**
+- Scans your Gmail for job application emails
+- Tracks applications and their status (pending, responded, ghosted)
+- Calculates your callback rate
+- Uses AI to analyze why applications might be getting ghosted
+- Generates recommendations to improve response rates
+- Shows which companies you've applied to most
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+**Privacy:** All data is stored locally in your browser's LocalStorage. No backend, no database, no data collection.
 
-Changes made via Lovable will be committed automatically to this repo.
+## How It Works
+```
+Gmail API (OAuth) → Scan sent emails → Extract applications → Store in LocalStorage
+                                            ↓
+                                     Gemini AI analysis
+                                            ↓
+                                   Display insights dashboard
+```
 
-**Use your preferred IDE**
+**Architecture decisions:**
+- No backend: Simplifies deployment and keeps data private
+- LocalStorage: Data persists locally, never leaves your device
+- OAuth only: No user accounts or authentication server needed
+- Client-side AI: Gemini API called directly from browser
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS + shadcn/ui (components)
+- Gmail API (OAuth 2.0 for email access)
+- Google Gemini AI (application analysis)
+- Browser LocalStorage (data persistence)
 
-Follow these steps:
+## Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js 18+
+- Google Cloud account (free tier)
+- Gmail account
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 1. Install Dependencies
+```bash
+git clone https://github.com/DanCsoftware/Ghost.git
+cd Ghost
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 2. Configure Google Cloud
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+**Enable Gmail API:**
+1. Create a project at [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the Gmail API
+3. Create OAuth 2.0 credentials (Web application type)
+4. Add `http://localhost:5173` to authorized JavaScript origins
+5. Copy your Client ID
+
+**Get Gemini API Key:**
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Generate an API key
+3. Copy the key
+
+### 3. Environment Variables
+
+Create `.env`:
+```env
+VITE_GMAIL_CLIENT_ID=your_client_id_here
+VITE_GEMINI_API_KEY=your_gemini_key_here
+```
+
+### 4. Run Locally
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Visit `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Usage
 
-**Use GitHub Codespaces**
+1. Click "Connect Gmail"
+2. Authorize Gmail access (read-only)
+3. Ghost scans your sent mail for job applications
+4. View your dashboard with stats and AI insights
+5. Click "Scan Another Inbox" to clear data and connect a different account
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Data Storage
 
-## What technologies are used for this project?
+All application data is stored in browser LocalStorage under the key `ghost_job_applications`. This means:
+- Data persists across browser sessions
+- Data is cleared if you clear browser storage
+- Data is only accessible from your device
+- No server storage or backups
 
-This project is built with:
+## Development
+```bash
+# Install dependencies
+npm install
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Run dev server
+npm run dev
 
-## How can I deploy this project?
+# Build for production
+npm run build
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+# Preview production build
+npm run preview
+```
 
-## Can I connect a custom domain to my Lovable project?
+## Project Structure
+```
+Ghost/
+├── src/
+│   ├── components/
+│   │   ├── GhostEntry.tsx    # OAuth login screen
+│   │   └── GhostScan.tsx     # Main dashboard
+│   ├── lib/
+│   │   ├── storage.ts        # LocalStorage helpers
+│   │   └── gemini.ts         # AI analysis
+│   └── App.tsx               # Root component
+├── .env                      # API keys (not in git)
+└── README.md
+```
 
-Yes, you can!
+## Known Limitations
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Only tracks emails sent after October 2024 (configurable in code)
+- Company name extraction is basic (uses email domain)
+- Response detection is time-based only (7 days = ghosted)
+- No actual response parsing (future enhancement)
+- Clearbit logo API has CORS limitations (some logos fail)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Future Improvements
+
+- Parse actual email responses to detect callbacks
+- Better company name extraction
+- Export data to CSV
+- Track application sources (LinkedIn, Indeed, etc.)
+- Multi-language support
+- Desktop app packaging
+
+## License
+
+MIT
+
+## Contributing
+
+Pull requests welcome. For major changes, open an issue first to discuss.
+
+---
+
+Built to solve a real problem during job hunting.
