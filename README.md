@@ -2,6 +2,8 @@
 
 A job application tracker that connects to your Gmail and tells you which applications got ghosted.
 
+![Ghosty Demo](ghosty-demo.gif)
+
 ## The Problem
 
 When job hunting, it's hard to track which applications you've sent and whether companies responded. Ghost automates this by scanning your Gmail for job applications and identifying which ones never got a response.
